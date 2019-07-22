@@ -1,34 +1,39 @@
+import { aboutController } from "./controllers/about-controller.js";
+import { catalogController } from "./controllers/catalog-controller.js";
+import { homeController } from "./controllers/home-controller.js";
+import { userController } from "./controllers/user-controller.js";
+
 $(() => {
     const app = Sammy('#main', async function () {
         this.use('Handlebars', 'hbs');
 
         //Home
-        this.get('/', handler.getHome);
-        
+        this.get('/', homeController.getHome);
+
         //About
-        this.get('#/about', handler.getAbout);
-
-        //Logout
-        this.get('#/logout', handler.logout);
-
-        //Login
-        this.get('#/login', handler.login.get);
-        this.post('#/login', handler.login.post);
+        this.get('#/about', aboutController.getAbout);
 
         //Register
-        this.get('#/register', handler.register.get)
-        this.post('#/register', handler.register.post)
+        this.get('#/register', userController.getRegister)
+        this.post('#/register', userController.postRegister)
+
+        //Login
+        this.get('#/login', userController.getLogin);
+        this.post('#/login', userController.postLogin);
+
+        //Logout
+        this.get('#/logout', userController.logout);
 
         //Catalog-Team
-        this.get('#/catalog', handler.team.getTeamCatalog);
-        this.get('#/catalog/:id', handler.team.getTeamDetails);
-        this.get('#/create', handler.team.getCreateTeam);
-        this.post('#/create', handler.team.postCreateTeam);
-        this.get('#/join/:id', handler.team.joinTeam);
-        this.get('#/leave', handler.team.leaveTeam);
-        this.get('#/edit/:id', handler.team.getEditInfo);
-        this.post('#/edit/:id', handler.team.postEditInfo);
-    }); 
+        this.get('#/catalog', catalogController.getTeamCatalog);
+        this.get('#/catalog/:id', catalogController.getTeamDetails);
+        this.get('#/create', catalogController.getCreateTeam);
+        this.post('#/create', catalogController.postCreateTeam);
+        this.get('#/join/:id', catalogController.joinTeam);
+        this.get('#/leave', catalogController.leaveTeam);
+        this.get('#/edit/:id', catalogController.getEditInfo);
+        this.post('#/edit/:id', catalogController.postEditInfo);
+    });
 
-    app.run('/');
+    app.run('/')
 });
