@@ -1,4 +1,5 @@
 import { teamsService } from '../models/teamsService.js';
+import { auth } from '../models/auth.js';
 
 const catalogController = function () {
     function getTeamCatalog(ctx) {
@@ -63,19 +64,29 @@ const catalogController = function () {
     function postCreateTeam(ctx) {
         teamsService
             .createTeam(ctx.params.name, ctx.params.comment)
-            .then(() => ctx.redirect('#/catalog'));
+            .then(() => {
+                auth.showInfo('Successfully created a team!');
+                ctx.redirect('#/catalog');
+            })
+            .catch(() => auth.showError('Failed at team creation!'));
     }
 
     function joinTeam(ctx) {
         teamsService
             .joinTeam(ctx.params.id)
-            .then(() => ctx.redirect(`#/catalog/` + ctx.params.id));
+            .then(() => {
+                auth.showInfo('Successfully joined the team!');
+                ctx.redirect(`#/catalog/` + ctx.params.id)
+            });
     }
 
     function leaveTeam(ctx) {
         teamsService
             .leaveTeam()
-            .then(() => ctx.redirect('#/catalog/' + ctx.params.id));
+            .then(() => {
+                auth.showInfo('Successfully left a team!');
+                ctx.redirect('#/catalog/' + ctx.params.id);
+            });
     }
 
     function getEditInfo(ctx) {
@@ -94,8 +105,11 @@ const catalogController = function () {
     function postEditInfo(ctx) {
         teamsService
             .edit(ctx.params.id, ctx.params.name, ctx.params.comment)
-            .then(() => ctx.redirect('#/catalog/' + ctx.params.id));
-
+            .then(() => {
+                auth.showInfo('Successfully edited the info!');
+                ctx.redirect('#/catalog/' + ctx.params.id);
+            })
+            .catch(() => auth.showError('Failed at team editing!'));;
     }
 
     return {

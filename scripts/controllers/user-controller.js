@@ -15,14 +15,23 @@ const userController = function () {
     }
 
     function postRegister(ctx) {
+        if (ctx.params.password !== ctx.params.repeatPassword) {
+            auth.showError('Password and repeat password must match!');
+            return;
+        }
+
         auth.register(ctx.params.username, ctx.params.password, ctx.params.repeatPassword)
-            .then(() => ctx.redirect('#/login'));
+            .then(() => {
+                auth.showInfo('Successfully registered!')
+                ctx.redirect('#/login');
+            });
     }
 
     //Logout
     function logout(ctx) {
         auth.logout()
             .then(() => {
+                auth.showInfo("You've logged out!");
                 sessionStorage.clear();
                 ctx.redirect('/');
             });
@@ -44,7 +53,11 @@ const userController = function () {
     function postLogin(ctx) {
         auth.login(ctx.params.username, ctx.params.password)
             .then(data => auth.saveSession(data))
-            .then(() => ctx.redirect('/'));
+            .then(() => {
+                auth.showInfo('Successfully loged in!')
+                ctx.redirect('/');
+            })
+            .catch(() => auth.showError('Wrong username or password!'));
     }
 
     return {
