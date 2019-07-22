@@ -22,11 +22,10 @@ let auth = (() => {
     }
 
     // user/register
-    function register(username, password, repeatPassword) {
+    function register(username, password) {
         let userData = {
             username,
-            password,
-            repeatPassword
+            password
         };
 
         return requester.post('user', '', 'basic', userData);

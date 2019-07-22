@@ -23,7 +23,8 @@ let teamsService = (() => {
     function createTeam(name, comment) {
         let teamData = {
             name: name,
-            comment: comment
+            comment: comment,
+            members: [{ username: `${sessionStorage.getItem('username')}` }]
         };
 
         return requester.post('appdata', 'teams', 'kinvey', teamData);
@@ -35,6 +36,7 @@ let teamsService = (() => {
             teamId: teamId
         };
 
+        sessionStorage.setItem('teamId', teamId);
         return requester.update('user', sessionStorage.getItem('userId'), 'kinvey', userData);
     }
 
@@ -44,7 +46,30 @@ let teamsService = (() => {
             teamId: ''
         };
 
-       return requester.update('user', sessionStorage.getItem('userId'), userData, 'kinvey');
+        sessionStorage.setItem('teamId', '');
+        return requester.update('user', sessionStorage.getItem('userId'), userData, 'kinvey');
+    }
+
+    function addMember(teamId) {
+        return fetch(`https://baas.kinvey.com/appdata/kid_S1iMzOQzH/teams/${teamId}`,
+            {
+                'method': 'GET',
+                'headers': {
+                    'Authorization': requester.makeAuth('kinvey')
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                data.members.push({ username: sessionStorage.getItem('username') });
+                fetch(`https://baas.kinvey.com/appdata/kid_S1iMzOQzH/teams/${teamId}`,
+                {
+                    'method': 'PUT',
+                    'headers': {
+                        'Authorization': 'Basic ' + btoa('Siskoy:1234')
+                    },
+                    'body': JSON.stringify(data)
+                })
+            });
     }
 
     return {
@@ -53,7 +78,8 @@ let teamsService = (() => {
         edit,
         createTeam,
         joinTeam,
-        leaveTeam
+        leaveTeam,
+        addMember,
     }
 })()
 

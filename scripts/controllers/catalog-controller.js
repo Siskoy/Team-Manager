@@ -31,11 +31,7 @@ const catalogController = function () {
                 ctx.name = data.name;
                 ctx.comment = data.comment;
                 if (data.members) {
-                    ctx.members = data.members.map(name => {
-                        return {
-                            username: name
-                        };
-                    });
+                    ctx.members = data.members;
                 }
                 ctx.loadPartials({
                     header: '/templates/common/header.hbs',
@@ -85,7 +81,7 @@ const catalogController = function () {
             .leaveTeam()
             .then(() => {
                 auth.showInfo('Successfully left a team!');
-                ctx.redirect('#/catalog/' + ctx.params.id);
+                ctx.redirect('#/catalog');
             });
     }
 

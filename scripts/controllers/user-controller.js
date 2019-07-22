@@ -20,7 +20,7 @@ const userController = function () {
             return;
         }
 
-        auth.register(ctx.params.username, ctx.params.password, ctx.params.repeatPassword)
+        auth.register(ctx.params.username, ctx.params.password)
             .then(() => {
                 auth.showInfo('Successfully registered!')
                 ctx.redirect('#/login');
