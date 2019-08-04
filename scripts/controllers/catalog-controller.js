@@ -1,106 +1,84 @@
 const catalogController = function () {
-    function getTeamCatalog(ctx) {
-        ctx.loggedIn = sessionStorage.getItem("userId") !== null;
-        ctx.username = sessionStorage.getItem('username');
-        ctx.hasNoTeam = sessionStorage.getItem('teamId') === 'undefined';
-        teamsService
-            .loadTeams()
-            .then(data => {
-                ctx.teams = data
-                ctx.loadPartials({
-                    header: '/templates/common/header.hbs',
-                    footer: '/templates/common/footer.hbs',
-                    team: 'templates/catalog/team.hbs'
-                }).then(function () {
-                    this.partial('/templates/catalog/teamCatalog.hbs');
-                });
+    async function getTeamCatalog(context) {
+        helper.addHeaderInfo(context);
+        context.hasNoTeam = sessionStorage.getItem('teamId') === 'undefined';
+        context.teams = await teamsService.loadTeams();
+
+        helper.loadPartials(context, { team: 'templates/catalog/team.hbs' })
+            .then(function () {
+                this.partial('/templates/catalog/teamCatalog.hbs');
             });
     }
 
-    function getTeamDetails(ctx) {
-        ctx.loggedIn = sessionStorage.getItem("userId") !== null;
-        ctx.username = sessionStorage.getItem('username');
-        teamsService.loadTeamDetails(ctx.params.id)
-            .then(data => {
-                ctx.teamId = data._id;
-                ctx.isAuthor = sessionStorage.getItem('userId') === data._acl.creator;
-                ctx.isOnTeam = sessionStorage.getItem('teamId') === data._id;
-                ctx.name = data.name;
-                ctx.comment = data.comment;
-                if (data.members) {
-                    ctx.members = data.members;
-                }
-                ctx.loadPartials({
-                    header: '/templates/common/header.hbs',
-                    footer: '/templates/common/footer.hbs',
-                    teamControls: 'templates/catalog/teamControls.hbs',
-                    teamMember: 'templates/catalog/teamMember.hbs'
-                }).then(function () {
-                    this.partial('/templates/catalog/details.hbs');
-                });
+    async function getTeamDetails(context) {
+        helper.addHeaderInfo(context);
+
+        context.team = await teamsService.loadTeamDetails(context.params.id);
+        context.team.isAuthor = sessionStorage.getItem('userId') === context.team._acl.creator;
+        context.team.isOnTeam = sessionStorage.getItem('teamId') === context.team._id;
+
+        helper.loadPartials(context, {
+            'teamControls': 'templates/catalog/teamControls.hbs',
+            'teamMember': 'templates/catalog/teamMember.hbs'
+        })
+            .then(function () {
+                this.partial('/templates/catalog/details.hbs');
             });
     }
 
-    function getCreateTeam(ctx) {
-        ctx.loggedIn = sessionStorage.getItem("userId") !== null;
-        ctx.username = sessionStorage.getItem('username');
+    function getCreateTeam(context) {
+        helper.addHeaderInfo(context);
 
-        ctx.loadPartials({
-            header: '/templates/common/header.hbs',
-            footer: '/templates/common/footer.hbs',
-            createForm: '/templates/create/createForm.hbs'
-        }).then(function () {
-            this.partial('/templates/create/createPage.hbs');
-        });
+        helper.loadPartials(context, { 'createForm': '/templates/create/createForm.hbs' })
+            .then(function () {
+                this.partial('/templates/create/createPage.hbs');
+            });
     }
 
-    function postCreateTeam(ctx) {
+    function postCreateTeam(context) {
         teamsService
-            .createTeam(ctx.params.name, ctx.params.comment)
+            .createTeam(context.params.name, context.params.comment)
             .then(() => {
-                auth.showInfo('Successfully created a team!');
-                ctx.redirect('#/catalog');
+                context.redirect('#/catalog');
+                auth.showSuccess('Successfully created a team!');
             })
             .catch(() => auth.showError('Failed at team creation!'));
     }
 
-    function joinTeam(ctx) {
+    function joinTeam(context) {
         teamsService
-            .joinTeam(ctx.params.id)
+            .joinTeam(context.params.id)
             .then(() => {
-                auth.showInfo('Successfully joined the team!');
-                ctx.redirect(`#/catalog/` + ctx.params.id)
+                context.redirect(`#/catalog/` + context.params.id);
+                auth.showSuccess('Successfully joined the team!');
             });
     }
 
-    function leaveTeam(ctx) {
+    function leaveTeam(context) {
         teamsService
             .leaveTeam()
             .then(() => {
-                auth.showInfo('Successfully left a team!');
-                ctx.redirect('#/catalog');
+                context.redirect('#/catalog');
+                auth.showSuccess('Successfully left a team!');
             });
     }
 
-    function getEditInfo(ctx) {
-        ctx.loggedIn = sessionStorage.getItem("userId") !== null;
-        ctx.username = sessionStorage.getItem('username');
-        ctx.teamId = ctx.params.id;
-        ctx.loadPartials({
-            header: '/templates/common/header.hbs',
-            footer: '/templates/common/footer.hbs',
-            editForm: '/templates/edit/editForm.hbs'
-        }).then(function () {
-            this.partial('/templates/edit/editPage.hbs');
-        });
+    function getEditInfo(context) {
+        helper.addHeaderInfo(context);
+        context.teamId = context.params.id;
+
+        helper.loadPartials(context, { 'editForm': '/templates/edit/editForm.hbs' })
+            .then(function () {
+                this.partial('/templates/edit/editPage.hbs');
+            });
     }
 
-    function postEditInfo(ctx) {
+    function postEditInfo(context) {
         teamsService
-            .edit(ctx.params.id, ctx.params.name, ctx.params.comment)
+            .edit(context.params.id, context.params.name, context.params.comment)
             .then(() => {
+                context.redirect('#/catalog/' + context.params.id);
                 auth.showInfo('Successfully edited the info!');
-                ctx.redirect('#/catalog/' + ctx.params.id);
             })
             .catch(() => auth.showError('Failed at team editing!'));;
     }

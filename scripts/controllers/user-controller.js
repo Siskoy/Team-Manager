@@ -1,59 +1,48 @@
 const userController = function () {
-    //Register
-    function getRegister(ctx) {
-        ctx.loggedIn = sessionStorage.getItem("userId") !== null;
-        ctx.username = sessionStorage.getItem('username');
-        ctx.loadPartials({
-            header: '/templates/common/header.hbs',
-            footer: '/templates/common/footer.hbs',
-            registerForm: '/templates/register/registerForm.hbs'
-        }).then(function () {
-            this.partial('/templates/register/registerPage.hbs');
-        })
+    function getRegister(context) {
+        helper.addHeaderInfo(context);
+        helper.loadPartials(context, { 'registerForm': '/templates/register/registerForm.hbs' })
+            .then(function () {
+                this.partial('/templates/register/registerPage.hbs');
+            })
     }
 
-    function postRegister(ctx) {
-        if (ctx.params.password !== ctx.params.repeatPassword) {
+    function postRegister(context) {
+        if (context.params.password !== context.params.repeatPassword) {
             auth.showError('Password and repeat password must match!');
             return;
         }
 
-        auth.register(ctx.params.username, ctx.params.password)
+        auth.register(context.params.username, context.params.password)
             .then(() => {
-                auth.showInfo('Successfully registered!')
-                ctx.redirect('#/login');
+                context.redirect('#/login');
+                auth.showSuccess('Successfully registered!');
             });
     }
 
-    //Logout
-    function logout(ctx) {
+    function logout(context) {
         auth.logout()
             .then(() => {
-                auth.showInfo("You've logged out!");
                 sessionStorage.clear();
-                ctx.redirect('/');
+                context.redirect('/');
+                auth.showSuccess("You've logged out!");
             });
     }
 
-    //Login
-    function getLogin(ctx) {
-        ctx.loggedIn = sessionStorage.getItem("userId") !== null;
-        ctx.username = sessionStorage.getItem('username');
-        ctx.loadPartials({
-            header: '/templates/common/header.hbs',
-            footer: '/templates/common/footer.hbs',
-            loginForm: '/templates/login/loginForm.hbs'
-        }).then(function () {
-            this.partial('/templates/login/loginPage.hbs');
-        })
+    function getLogin(context) {
+        helper.addHeaderInfo(context);
+        helper.loadPartials(context, { 'loginForm': '/templates/login/loginForm.hbs' })
+            .then(function () {
+                this.partial('/templates/login/loginPage.hbs');
+            })
     }
 
-    function postLogin(ctx) {
-        auth.login(ctx.params.username, ctx.params.password)
+    function postLogin(context) {
+        auth.login(context.params.username, context.params.password)
             .then(data => auth.saveSession(data))
             .then(() => {
-                auth.showInfo('Successfully loged in!')
-                ctx.redirect('/');
+                context.redirect('/');
+                auth.showSuccess('Successfully loged in!')
             })
             .catch(() => auth.showError('Wrong username or password!'));
     }

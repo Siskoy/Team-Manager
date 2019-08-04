@@ -1,24 +1,19 @@
 const homeController = function () {
-    function getHome(ctx) {
-        ctx.loggedIn = sessionStorage.getItem("userId") !== null;
-        ctx.username = sessionStorage.getItem('username');
-        ctx.loadPartials({
-            header: '/templates/common/header.hbs',
-            footer: '/templates/common/footer.hbs'
-        }).then(function () {
-            this.partial('/templates/home/home.hbs');
-        });
+    function getHome(context) {
+        helper.addHeaderInfo(context);
+
+        helper.loadPartials(context)
+            .then(function () {
+                this.partial('/templates/home/home.hbs');
+            });
     }
 
-    function getAbout (ctx) {
-        ctx.loggedIn = sessionStorage.getItem("userId") !== null;
-        ctx.username = sessionStorage.getItem('username');
-        ctx.loadPartials({
-            header: '/templates/common/header.hbs',
-            footer: '/templates/common/footer.hbs'
-        }).then(function () {
-            this.partial('/templates/about/about.hbs');
-        });
+    function getAbout(context) {
+        helper.addHeaderInfo(context);
+        helper.loadPartials(context)
+            .then(function () {
+                this.partial('/templates/about/about.hbs');
+            });
     }
 
     return {

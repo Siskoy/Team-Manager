@@ -38,15 +38,11 @@ let auth = (() => {
         return requester.post('user', '_logout', 'kinvey', logoutData);
     }
 
-    function handleError(reason) {
-        showError(reason.responseJSON.description);
-    }
-
-    function showInfo(message) {
-        let infoBox = $('#infoBox');
-        infoBox.text(message);
-        infoBox.show();
-        setTimeout(() => infoBox.fadeOut(), 3000);
+    function showSuccess(message) {
+        let successBox = $('#infoBox');
+        successBox.text(message);
+        successBox.show();
+        setTimeout(() => successBox.fadeOut(), 3000);
     }
 
     function showError(message) {
@@ -61,8 +57,7 @@ let auth = (() => {
         register,
         logout,
         saveSession,
-        showInfo,
-        showError,
-        handleError
+        showSuccess,
+        showError
     }
 })()
