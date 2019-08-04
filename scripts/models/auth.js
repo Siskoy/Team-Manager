@@ -1,5 +1,3 @@
-import { requester } from '../models/requester.js';
-
 let auth = (() => {
     function saveSession(userInfo) {
         let userAuth = userInfo._kmd.authtoken;
@@ -68,5 +66,3 @@ let auth = (() => {
         handleError
     }
 })()
-
-export { auth }

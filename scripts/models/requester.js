@@ -53,5 +53,3 @@ let requester = (() => {
         makeAuth,
     }
 })()
-
-export { requester };

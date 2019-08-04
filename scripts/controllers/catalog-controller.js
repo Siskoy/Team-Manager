@@ -1,6 +1,3 @@
-import { teamsService } from '../models/teamsService.js';
-import { auth } from '../models/auth.js';
-
 const catalogController = function () {
     function getTeamCatalog(ctx) {
         ctx.loggedIn = sessionStorage.getItem("userId") !== null;
@@ -119,5 +116,3 @@ const catalogController = function () {
         postEditInfo,
     }
 }()
-
-export { catalogController };

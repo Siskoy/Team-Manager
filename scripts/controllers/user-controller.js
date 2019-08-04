@@ -1,5 +1,3 @@
-import { auth } from '../models/auth.js';
-
 const userController = function () {
     //Register
     function getRegister(ctx) {
@@ -68,5 +66,3 @@ const userController = function () {
         logout,
     }
 }()
-
-export { userController };

@@ -1,5 +1,3 @@
-import { requester } from '../models/requester.js';
-
 let teamsService = (() => {
     function loadTeams() {
         // Request teams from db
@@ -82,5 +80,3 @@ let teamsService = (() => {
         addMember,
     }
 })()
-
-export { teamsService };

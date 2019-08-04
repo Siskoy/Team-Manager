@@ -1,8 +1,3 @@
-import { aboutController } from "./controllers/about-controller.js";
-import { catalogController } from "./controllers/catalog-controller.js";
-import { homeController } from "./controllers/home-controller.js";
-import { userController } from "./controllers/user-controller.js";
-
 $(() => {
     const app = Sammy('#main', async function () {
         this.use('Handlebars', 'hbs');
@@ -11,7 +6,7 @@ $(() => {
         this.get('/', homeController.getHome);
 
         //About
-        this.get('#/about', aboutController.getAbout);
+        this.get('#/about', homeController.getAbout);
 
         //Register
         this.get('#/register', userController.getRegister)
